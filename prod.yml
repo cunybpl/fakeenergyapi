@@ -1,0 +1,13 @@
+version: '3.4'
+  
+services:
+
+    nginx: 
+        volumes:
+            - ./nginx/prod.conf:/etc/nginx/conf.d/default.conf 
+            - ./nginx/certs/fake.cunybplservices.crt:/etc/ssl/certs/fake.cunybplservices.crt
+            - ./nginx/certs/fake.cunybplservices.key:/etc/ssl/private/fake.cunybplservices.key
+        ports:
+            - "80:80"
+            - "443:443"
+        

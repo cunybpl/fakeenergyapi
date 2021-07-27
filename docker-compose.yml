@@ -1,0 +1,57 @@
+version: '3.4'
+
+x-default-environment:
+    &default-environment
+    - ENTRYPOINT_DEFAULT_DATABASE_URI=${ENTRYPOINT_DEFAULT_DATABASE_URI}
+    - DEFAULT_POSTGRES_NAME=${DEFAULT_POSTGRES_NAME}
+    - DEFAULT_POSTGRES_USER=${DEFAULT_POSTGRES_USER}
+    - DEFAULT_POSTGRES_PASSWORD=${DEFAULT_POSTGRES_PASSWORD}
+    - DEFAULT_POSTGRES_HOST=${DEFAULT_POSTGRES_HOST}
+    - DEFAULT_POSTGRES_PORT=${DEFAULT_POSTGRES_PORT}
+    - SECRET_KEY=${SECRET_KEY}
+    - DEBUG=${DEBUG}
+  
+services:
+
+    nginx: 
+        container_name: energyfakerapi_nginx 
+        image: nginx:latest
+        restart: "no"
+        volumes:
+            - ./nginx/dev.conf:/etc/nginx/conf.d/default.conf 
+        depends_on: 
+            - web
+        ports:
+            - "80:80"
+        
+
+    default_db:
+        container_name: energyfakerapi_defaultdb
+        image: postgres:11.2
+        restart: "no"
+        environment:
+            - POSTGRES_USER=${DEFAULT_POSTGRES_USER}
+            - POSTGRES_PASSWORD=${DEFAULT_POSTGRES_PASSWORD} 
+            - POSTGRES_DB=${DEFAULT_POSTGRES_NAME}
+        volumes:
+            - pgdata:/var/lib/postgresql/data 
+        expose:
+            - "5432"
+
+    # in local development both websocket and http are on same server
+    web:
+        container_name: energyfakerapi_web
+        restart: "no"
+        build: 
+            context: .
+            dockerfile: ./Dockerfile 
+        environment: *default-environment
+        image: energyfakerapi:dev
+        entrypoint: /code/docker-entrypoint.sh
+        volumes:
+            - .:/code
+        depends_on:
+            - default_db
+
+volumes:
+    pgdata:
