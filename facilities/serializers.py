@@ -23,3 +23,10 @@ class ConsumptionSerializer(serializers.ModelSerializer):
             'year', 
             'month'
         ]
+
+
+class CoefficientRecordSerializer(serializers.ModelSerializer): 
+
+    class Meta: 
+        model = models.CoefficientRecord
+        fields = '__all__'

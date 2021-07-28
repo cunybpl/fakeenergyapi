@@ -38,3 +38,15 @@ class Consumption(models.Model):
             models.Index(fields=['facility', 'month']), 
             models.Index(fields=['facility', 'epa_energy_type'])
         ]
+
+class CoefficientRecord(models.Model): 
+    
+    epa_energy_type =  models.CharField(max_length=50, unique=True)
+    site_to_source_ratio = models.FloatField()
+    kbtu_coeff = models.FloatField()
+    co2e_coeff = models.FloatField()    
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['epa_energy_type'])
+        ]
